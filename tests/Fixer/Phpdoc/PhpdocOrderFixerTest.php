@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace PhpCsFixer\Tests\Fixer\Phpdoc;
 
-use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
+use PhpCsFixer\Fixer\Phpdoc\PhpdocOrderFixer;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
@@ -27,22 +27,6 @@ use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
  */
 final class PhpdocOrderFixerTest extends AbstractFixerTestCase
 {
-    public function testEmptyOrderConfiguration(): void
-    {
-        $this->expectException(InvalidFixerConfigurationException::class);
-        $this->expectExceptionMessage('The option "order" value is invalid. Minimum two tags are required.');
-
-        $this->fixer->configure(['order' => []]);
-    }
-
-    public function testInvalidOrderConfiguration(): void
-    {
-        $this->expectException(InvalidFixerConfigurationException::class);
-        $this->expectExceptionMessage('The option "order" value is invalid. Minimum two tags are required.');
-
-        $this->fixer->configure(['order' => ['param']]);
-    }
-
     public function testNoChanges(): void
     {
         $expected = <<<'EOF'
@@ -63,9 +47,7 @@ EOF;
     }
 
     /**
-     * @dataProvider provideDifferentOrderCases
-     *
-     * @param array<string, mixed> $config
+     * @dataProvider provideAllAvailableOrderStyleCases
      */
     public function testOnlyParams(array $config): void
     {
@@ -83,9 +65,7 @@ EOF;
     }
 
     /**
-     * @dataProvider provideDifferentOrderCases
-     *
-     * @param array<string, mixed> $config
+     * @dataProvider provideAllAvailableOrderStyleCases
      */
     public function testOnlyReturns(array $config): void
     {
@@ -104,9 +84,7 @@ EOF;
     }
 
     /**
-     * @dataProvider provideDifferentOrderCases
-     *
-     * @param array<string, mixed> $config
+     * @dataProvider provideAllAvailableOrderStyleCases
      */
     public function testEmpty(array $config): void
     {
@@ -115,9 +93,7 @@ EOF;
     }
 
     /**
-     * @dataProvider provideDifferentOrderCases
-     *
-     * @param array<string, mixed> $config
+     * @dataProvider provideAllAvailableOrderStyleCases
      */
     public function testNoAnnotations(array $config): void
     {
@@ -160,7 +136,7 @@ EOF;
         $this->doTest($expected, $input);
     }
 
-    public function testFixCompleteCase(): void
+    public function testFixCompeteCase(): void
     {
         $expected = <<<'EOF'
 <?php
@@ -254,9 +230,9 @@ EOF;
         $this->doTest($expected, $input);
     }
 
-    public function testNoChangesWithLaravelStyle(): void
+    public function testNoChangesithLaravelStyle(): void
     {
-        $this->fixer->configure(['order' => ['param', 'return', 'throws']]);
+        $this->fixer->configure(['style' => PhpdocOrderFixer::ORDER_STYLE_SYMFONY]);
 
         $expected = <<<'EOF'
 <?php
@@ -275,9 +251,9 @@ EOF;
         $this->doTest($expected);
     }
 
-    public function testFixBasicCaseWithLaravelStyle(): void
+    public function testFixBasicCaseWithSymfonyStyle(): void
     {
-        $this->fixer->configure(['order' => ['param', 'return', 'throws']]);
+        $this->fixer->configure(['style' => PhpdocOrderFixer::ORDER_STYLE_SYMFONY]);
 
         $expected = <<<'EOF'
 <?php
@@ -302,9 +278,9 @@ EOF;
         $this->doTest($expected, $input);
     }
 
-    public function testFixCompleteCaseWithLaravelStyle(): void
+    public function testFixCompeteCaseWithSymfonyStyle(): void
     {
-        $this->fixer->configure(['order' => ['param', 'return', 'throws']]);
+        $this->fixer->configure(['style' => PhpdocOrderFixer::ORDER_STYLE_SYMFONY]);
 
         $expected = <<<'EOF'
 <?php
@@ -361,9 +337,9 @@ EOF;
         $this->doTest($expected, $input);
     }
 
-    public function testExampleFromSymfonyWithLaravelStyle(): void
+    public function testExampleFromSymfonyWithSymfonyStyle(): void
     {
-        $this->fixer->configure(['order' => ['param', 'return', 'throws']]);
+        $this->fixer->configure(['style' => PhpdocOrderFixer::ORDER_STYLE_SYMFONY]);
 
         $input = <<<'EOF'
 <?php
@@ -384,440 +360,11 @@ EOF;
         $this->doTest($input);
     }
 
-    /**
-     * @return array<string, mixed>[][]
-     */
-    public static function provideDifferentOrderCases(): array
+    public function provideAllAvailableOrderStyleCases(): array
     {
         return [
-            [['order' => ['param', 'throw', 'return']]],
-            [['order' => ['param', 'return', 'throw']]],
-        ];
-    }
-
-    /**
-     * @dataProvider provideBasicCodeWithDifferentOrdersCases
-     *
-     * @param array<string, mixed> $config
-     */
-    public function testFixBasicCaseWithDifferentOrders(array $config, string $expected, ?string $input): void
-    {
-        $this->fixer->configure($config);
-
-        $this->doTest($expected, $input);
-    }
-
-    /**
-     * @return array<array<null|array<string, mixed>|string>>
-     */
-    public static function provideBasicCodeWithDifferentOrdersCases(): array
-    {
-        $input = <<<'EOF'
-<?php
-    /**
-     * @throws Exception
-     * @return bool
-     * @param string $foo
-     */
-
-EOF;
-
-        return [
-            [
-                ['order' => ['return', 'throws', 'param']],
-                <<<'EOF'
-<?php
-    /**
-     * @return bool
-     * @throws Exception
-     * @param string $foo
-     */
-
-EOF,
-                $input,
-            ],
-
-            [
-                ['order' => ['throws', 'return', 'param']],
-                <<<'EOF'
-<?php
-    /**
-     * @throws Exception
-     * @return bool
-     * @param string $foo
-     */
-
-EOF,
-                null,
-            ],
-        ];
-    }
-
-    public function testFixCompleteCaseWithCustomOrder(): void
-    {
-        $this->fixer->configure(['order' => [
-            'throws',
-            'return',
-            'param',
-            'custom',
-            'internal',
-        ]]);
-
-        $expected = <<<'EOF'
-<?php
-    /**
-     * Hello there!
-     *
-     * Long description
-     * goes here.
-     *
-     *
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     *
-     *
-     *
-     * @return bool Return false on failure.
-     * @return int  Return the number of changes.
-     *
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     * @internal
-     */
-
-EOF;
-
-        $input = <<<'EOF'
-<?php
-    /**
-     * Hello there!
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     *
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     *
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     *
-     *
-     * @return bool Return false on failure.
-     * @return int  Return the number of changes.
-     *
-     * @param string $foo
-     * @param bool   $bar Bar
-     */
-
-EOF;
-
-        $this->doTest($expected, $input);
-    }
-
-    /**
-     * @dataProvider provideCompleteCasesWithCustomOrdersCases
-     *
-     * @param array<string, mixed> $config
-     */
-    public function testFixCompleteCasesWithCustomOrders(array $config, string $expected, string $input): void
-    {
-        $this->fixer->configure($config);
-
-        $this->doTest($expected, $input);
-    }
-
-    /**
-     * @return array<string, array<int, string|string[][]>>
-     */
-    public static function provideCompleteCasesWithCustomOrdersCases(): array
-    {
-        return [
-            'intepacuthre' => [
-                ['order' => ['internal', 'template', 'param', 'custom', 'throws', 'return']],
-                <<<'EOF'
-<?php
-    /**
-     * Hello there
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     * @template T of Extension\Extension
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @param class-string<T> $id
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     * @return bool Return false on failure
-     * @return int  Return the number of changes.
-     **/
-
-EOF,
-                <<<'EOF'
-<?php
-    /**
-     * Hello there
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @param class-string<T> $id
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     * @template T of Extension\Extension
-     * @return bool Return false on failure
-     * @return int  Return the number of changes.
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     **/
-
-EOF,
-            ],
-            'pare' => [
-                ['order' => ['param', 'return']],
-                <<<'EOF'
-<?php
-    /**
-     * Hello there
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @param class-string<T> $id
-     * @return bool Return false on failure
-     * @return int  Return the number of changes.
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     * @template T of Extension\Extension
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     **/
-
-EOF,
-                <<<'EOF'
-<?php
-    /**
-     * Hello there
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     * @return bool Return false on failure
-     * @return int  Return the number of changes.
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     * @template T of Extension\Extension
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @param class-string<T> $id
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     **/
-
-EOF,
-            ],
-            'pareth' => [
-                ['order' => ['param', 'return', 'throws']],
-                <<<'EOF'
-<?php
-    /**
-     * Hello there
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     * @template T of Extension\Extension
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @param class-string<T> $id
-     * @return bool Return false on failure
-     * @return int  Return the number of changes.
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     **/
-
-EOF,
-                <<<'EOF'
-<?php
-    /**
-     * Hello there
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     * @return bool Return false on failure
-     * @return int  Return the number of changes.
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     * @template T of Extension\Extension
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @param class-string<T> $id
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     **/
-
-EOF,
-            ],
-            'pathre' => [
-                ['order' => ['param', 'throws', 'return']],
-                <<<'EOF'
-<?php
-    /**
-     * Hello there
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     * @template T of Extension\Extension
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @param class-string<T> $id
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     * @return bool Return false on failure
-     * @return int  Return the number of changes.
-     **/
-
-EOF,
-                <<<'EOF'
-<?php
-    /**
-     * Hello there
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     * @return bool Return false on failure
-     * @return int  Return the number of changes.
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     * @template T of Extension\Extension
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @param class-string<T> $id
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     **/
-
-EOF,
-            ],
-            'tepathre' => [
-                ['order' => ['template', 'param', 'throws', 'return']],
-                <<<'EOF'
-<?php
-    /**
-     * Hello there
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     * @template T of Extension\Extension
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @param class-string<T> $id
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     * @return bool Return false on failure
-     * @return int  Return the number of changes.
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     **/
-
-EOF,
-                <<<'EOF'
-<?php
-    /**
-     * Hello there
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     * @return bool Return false on failure
-     * @return int  Return the number of changes.
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @param class-string<T> $id
-     * @template T of Extension\Extension
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     **/
-
-EOF,
-            ],
-            'tepathre2' => [
-                ['order' => ['template', 'param', 'throws', 'return']],
-                <<<'EOF'
-<?php
-    /**
-     * Hello there
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     * @template T of Extension\Extension
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @param class-string<T> $id
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     * @return bool Return false on failure
-     * @return int  Return the number of changes.
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     **/
-
-EOF,
-                <<<'EOF'
-<?php
-    /**
-     * Hello there
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @param class-string<T> $id
-     * @return bool Return false on failure
-     * @return int  Return the number of changes.
-     * @template T of Extension\Extension
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     **/
-
-EOF,
-            ],
+            [['style' => PhpdocOrderFixer::ORDER_STYLE_PHPCS]],
+            [['style' => PhpdocOrderFixer::ORDER_STYLE_SYMFONY]],
         ];
     }
 }

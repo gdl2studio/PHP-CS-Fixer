@@ -25,7 +25,6 @@ use PhpCsFixer\FixerDefinition\FixerDefinition;
 use PhpCsFixer\FixerDefinition\FixerDefinitionInterface;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
-use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 /**
  * @author Graham Campbell <hello@gjcampbell.co.uk>
@@ -34,11 +33,24 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 final class PhpdocOrderFixer extends AbstractFixer implements ConfigurableFixerInterface
 {
     /**
-     * @const string[]
-     *
-     * @TODO: 4.0 - change default to ['param', 'return', 'throws']
+     * @internal
      */
-    private const ORDER_DEFAULT = ['param', 'throws', 'return'];
+    public const ORDER_STYLE_PHPCS = 'phpcs';
+
+    /**
+     * @internal
+     */
+    public const ORDER_STYLE_SYMFONY = 'symfony';
+
+    private const ORDERS = [
+        'phpcs' => ['param', 'throws', 'return'],
+        'symfony' => ['param', 'return', 'throws'],
+    ];
+
+    /**
+     * @var string[]
+     */
+    private array $order;
 
     /**
      * {@inheritdoc}
@@ -59,15 +71,32 @@ final class PhpdocOrderFixer extends AbstractFixer implements ConfigurableFixerI
 
 EOF;
 
+        $description = 'Annotations in PHPDoc should be ordered in one of the styles below:'."\n";
+        $opts = [];
+        foreach (self::ORDERS as $style => $order) {
+            $opts[] = "\n- `'{$style}'` style annotations order is `@".implode('`, `@', $order).'`';
+        }
+        $description .= implode(',', $opts).'.';
+
         return new FixerDefinition(
-            'Annotations in PHPDoc should be ordered in defined sequence.',
+            'Annotations in PHPDoc should be ordered in specific style.',
             [
                 new CodeSample($code),
-                new CodeSample($code, ['order' => self::ORDER_DEFAULT]),
-                new CodeSample($code, ['order' => ['param', 'return', 'throws']]),
-                new CodeSample($code, ['order' => ['param', 'custom', 'throws', 'return']]),
+                new CodeSample($code, ['style' => self::ORDER_STYLE_SYMFONY]),
+                new CodeSample($code, ['style' => self::ORDER_STYLE_PHPCS]),
             ],
+            $description
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configure(array $configuration): void
+    {
+        parent::configure($configuration);
+
+        $this->order = self::ORDERS[$this->configuration['style']];
     }
 
     /**
@@ -94,19 +123,14 @@ EOF;
      */
     protected function createConfigurationDefinition(): FixerConfigurationResolverInterface
     {
-        return new FixerConfigurationResolver([
-            (new FixerOptionBuilder('order', 'Sequence in which annotations in PHPDoc should be ordered.'))
-                ->setAllowedTypes(['string[]'])
-                ->setAllowedValues([function ($order) {
-                    if (\count($order) < 2) {
-                        throw new InvalidOptionsException('The option "order" value is invalid. Minimum two tags are required.');
-                    }
+        $style = new FixerOptionBuilder('style', 'Style in which annotations in PHPDoc should be ordered.');
+        $style
+            ->setAllowedTypes(['string'])
+            ->setAllowedValues([self::ORDER_STYLE_PHPCS, self::ORDER_STYLE_SYMFONY])
+            ->setDefault(self::ORDER_STYLE_PHPCS)
+        ;
 
-                    return true;
-                }])
-                ->setDefault(self::ORDER_DEFAULT)
-                ->getOption(),
-        ]);
+        return new FixerConfigurationResolver([$style->getOption()]);
     }
 
     /**
@@ -119,22 +143,14 @@ EOF;
                 continue;
             }
 
-            // assuming annotations are already grouped by tags
+            // assuming we sort three annotation tags
+            [$first, $middle, $last] = $this->order;
             $content = $token->getContent();
-
-            // sort annotations
-            $successors = $this->configuration['order'];
-            while (\count($successors) >= 3) {
-                $predecessor = array_shift($successors);
-                $content = $this->moveAnnotationsBefore($predecessor, $successors, $content);
-            }
-
-            // we're parsing the content last time to make sure the internal
+            // move $first to start, $last to end, leave $middle in the middle
+            $content = $this->moveAnnotationsBefore($first, [$middle, $last], $content);
+            // we're parsing the content again to make sure the internal
             // state of the docblock is correct after the modifications
-            $predecessors = $this->configuration['order'];
-            $last = array_pop($predecessors);
-            $content = $this->moveAnnotationsAfter($last, $predecessors, $content);
-
+            $content = $this->moveAnnotationsAfter($last, [$first, $middle], $content);
             // persist the content at the end
             $tokens[$index] = new Token([T_DOC_COMMENT, $content]);
         }
@@ -149,10 +165,10 @@ EOF;
     private function moveAnnotationsBefore(string $move, array $before, string $content): string
     {
         $doc = new DocBlock($content);
-        $toBeMoved = $doc->getAnnotationsOfType($move);
+        $to_be_moved = $doc->getAnnotationsOfType($move);
 
         // nothing to do if there are no annotations to be moved
-        if (0 === \count($toBeMoved)) {
+        if (0 === \count($to_be_moved)) {
             return $content;
         }
 
@@ -162,8 +178,8 @@ EOF;
             return $content;
         }
 
-        // get the index of the final line of the final toBoMoved annotation
-        $end = end($toBeMoved)->getEnd();
+        // get the index of the final line of the final to_be_moved annotation
+        $end = end($to_be_moved)->getEnd();
 
         $line = $doc->getLine($end);
 
@@ -188,10 +204,10 @@ EOF;
     private function moveAnnotationsAfter(string $move, array $after, string $content): string
     {
         $doc = new DocBlock($content);
-        $toBeMoved = $doc->getAnnotationsOfType($move);
+        $to_be_moved = $doc->getAnnotationsOfType($move);
 
         // nothing to do if there are no annotations to be moved
-        if (0 === \count($toBeMoved)) {
+        if (0 === \count($to_be_moved)) {
             return $content;
         }
 
@@ -202,8 +218,8 @@ EOF;
             return $content;
         }
 
-        // get the index of the first line of the first toBeMoved annotation
-        $start = $toBeMoved[0]->getStart();
+        // get the index of the first line of the first to_be_moved annotation
+        $start = $to_be_moved[0]->getStart();
         $line = $doc->getLine($start);
 
         // move stuff about if required
