@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace PhpCsFixer\Tests\Fixer\Phpdoc;
 
+use PhpCsFixer\Fixer\Phpdoc\PhpdocOrderFixer;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 
 /**
@@ -46,9 +47,7 @@ EOF;
     }
 
     /**
-     * @dataProvider provideDifferentOrderCases
-     *
-     * @param array<string, mixed> $config
+     * @dataProvider provideAllAvailableOrderStyleCases
      */
     public function testOnlyParams(array $config): void
     {
@@ -66,9 +65,7 @@ EOF;
     }
 
     /**
-     * @dataProvider provideDifferentOrderCases
-     *
-     * @param array<string, mixed> $config
+     * @dataProvider provideAllAvailableOrderStyleCases
      */
     public function testOnlyReturns(array $config): void
     {
@@ -87,9 +84,7 @@ EOF;
     }
 
     /**
-     * @dataProvider provideDifferentOrderCases
-     *
-     * @param array<string, mixed> $config
+     * @dataProvider provideAllAvailableOrderStyleCases
      */
     public function testEmpty(array $config): void
     {
@@ -98,9 +93,7 @@ EOF;
     }
 
     /**
-     * @dataProvider provideDifferentOrderCases
-     *
-     * @param array<string, mixed> $config
+     * @dataProvider provideAllAvailableOrderStyleCases
      */
     public function testNoAnnotations(array $config): void
     {
@@ -237,9 +230,9 @@ EOF;
         $this->doTest($expected, $input);
     }
 
-    public function testNoChangesWithLaravelStyle(): void
+    public function testNoChangesithLaravelStyle(): void
     {
-        $this->fixer->configure(['order' => ['param', 'return', 'throws']]);
+        $this->fixer->configure(['style' => PhpdocOrderFixer::ORDER_STYLE_SYMFONY]);
 
         $expected = <<<'EOF'
 <?php
@@ -258,9 +251,9 @@ EOF;
         $this->doTest($expected);
     }
 
-    public function testFixBasicCaseWithLaravelStyle(): void
+    public function testFixBasicCaseWithSymfonyStyle(): void
     {
-        $this->fixer->configure(['order' => ['param', 'return', 'throws']]);
+        $this->fixer->configure(['style' => PhpdocOrderFixer::ORDER_STYLE_SYMFONY]);
 
         $expected = <<<'EOF'
 <?php
@@ -285,9 +278,9 @@ EOF;
         $this->doTest($expected, $input);
     }
 
-    public function testFixCompeteCaseWithLaravelStyle(): void
+    public function testFixCompeteCaseWithSymfonyStyle(): void
     {
-        $this->fixer->configure(['order' => ['param', 'return', 'throws']]);
+        $this->fixer->configure(['style' => PhpdocOrderFixer::ORDER_STYLE_SYMFONY]);
 
         $expected = <<<'EOF'
 <?php
@@ -344,9 +337,9 @@ EOF;
         $this->doTest($expected, $input);
     }
 
-    public function testExampleFromSymfonyWithLaravelStyle(): void
+    public function testExampleFromSymfonyWithSymfonyStyle(): void
     {
-        $this->fixer->configure(['order' => ['param', 'return', 'throws']]);
+        $this->fixer->configure(['style' => PhpdocOrderFixer::ORDER_STYLE_SYMFONY]);
 
         $input = <<<'EOF'
 <?php
@@ -367,269 +360,11 @@ EOF;
         $this->doTest($input);
     }
 
-    /**
-     * @return array<string, mixed>[][]
-     */
-    public function provideDifferentOrderCases(): array
+    public function provideAllAvailableOrderStyleCases(): array
     {
         return [
-            [['order' => ['param', 'throw', 'return']]],
-            [['order' => ['param', 'return', 'throw']]],
+            [['style' => PhpdocOrderFixer::ORDER_STYLE_PHPCS]],
+            [['style' => PhpdocOrderFixer::ORDER_STYLE_SYMFONY]],
         ];
-    }
-
-    /**
-     * @dataProvider provideBasicCodeWithDifferentOrdersCases
-     *
-     * @param array<string, mixed> $config
-     */
-    public function testFixBasicCaseWithDifferentOrders(array $config, string $expected, ?string $input): void
-    {
-        $this->fixer->configure($config);
-
-        $this->doTest($expected, $input);
-    }
-
-    /**
-     * @return array<array<null|array<string, mixed>|string>>
-     */
-    public function provideBasicCodeWithDifferentOrdersCases(): array
-    {
-        $input = <<<'EOF'
-<?php
-    /**
-     * @throws Exception
-     * @return bool
-     * @param string $foo
-     */
-
-EOF;
-
-        return [
-            [
-                ['order' => ['return', 'throws', 'param']],
-                <<<'EOF'
-<?php
-    /**
-     * @return bool
-     * @throws Exception
-     * @param string $foo
-     */
-
-EOF,
-                $input,
-            ],
-
-            [
-                ['order' => ['throws', 'return', 'param']],
-                <<<'EOF'
-<?php
-    /**
-     * @throws Exception
-     * @return bool
-     * @param string $foo
-     */
-
-EOF,
-                null,
-            ],
-        ];
-    }
-
-    public function testFixCompeteCaseWithCustomOrder(): void
-    {
-        $this->fixer->configure(['order' => [
-            'throws',
-            'return',
-            'param',
-            'custom',
-            'internal',
-        ]]);
-
-        $expected = <<<'EOF'
-<?php
-    /**
-     * Hello there!
-     *
-     * Long description
-     * goes here.
-     *
-     *
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     *
-     *
-     *
-     * @return bool Return false on failure.
-     * @return int  Return the number of changes.
-     *
-     * @param string $foo
-     * @param bool   $bar Bar
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     * @internal
-     */
-
-EOF;
-
-        $input = <<<'EOF'
-<?php
-    /**
-     * Hello there!
-     *
-     * Long description
-     * goes here.
-     *
-     * @internal
-     *
-     * @throws Exception|RuntimeException dfsdf
-     *         jkaskdnaksdnkasndansdnansdajsdnkasd
-     *
-     * @custom Test!
-     *         asldnaksdkjasdasd
-     *
-     *
-     * @return bool Return false on failure.
-     * @return int  Return the number of changes.
-     *
-     * @param string $foo
-     * @param bool   $bar Bar
-     */
-
-EOF;
-
-        $this->doTest($expected, $input);
-    }
-
-    /**
-     * @dataProvider provideCompeteCasesWithCustomOrdersCases
-     *
-     * @param array<string, mixed> $config
-     */
-    public function testFixCompeteCasesWithCustomOrders(array $config, string $expected, string $input): void
-    {
-        $this->fixer->configure($config);
-
-        $this->doTest($expected, $input);
-    }
-
-    /**
-     * @return array<int, array<int, string|string[][]>>
-     */
-    public function provideCompeteCasesWithCustomOrdersCases(): array
-    {
-        $docBlockBricks = [
-            'title' => "Hello there\n",
-            'description' => "Long description\ngoes here.\n",
-            '@internal' => '',
-            '@throws' => "Exception|RuntimeException dfsdf\njkaskdnaksdnkasndansdnansdajsdnkasd",
-            '@custom' => "Test!\nasldnaksdkjasdasd",
-            '@return' => [
-                'bool Return false on failure',
-                'int  Return the number of changes.',
-            ],
-            '@param' => [
-                'string $foo',
-                'bool   $bar Bar',
-                'class-string<T> $id',
-            ],
-            '@template' => 'T of Extension\Extension',
-        ];
-
-        return [
-            [
-                ['order' => ['internal', 'template', 'param', 'custom', 'throws', 'return']],
-                self::glueBricks(
-                    $docBlockBricks,
-                    ['title', 'description', 'internal', 'template', 'param', 'custom', 'throws', 'return']
-                ),
-                self::glueBricks(
-                    $docBlockBricks,
-                    ['title', 'description', 'internal', 'param', 'custom', 'template', 'return', 'throws']
-                ),
-            ],
-            [
-                ['order' => ['param', 'return']],
-                self::glueBricks(
-                    $docBlockBricks,
-                    ['title', 'description', 'internal', 'param', 'return', 'custom', 'template', 'throws']
-                ),
-                self::glueBricks(
-                    $docBlockBricks,
-                    ['title', 'description', 'internal', 'return', 'custom', 'template', 'param', 'throws']
-                ),
-            ],
-            [
-                ['order' => ['param', 'return', 'throws']],
-                self::glueBricks(
-                    $docBlockBricks,
-                    ['title', 'description', 'internal', 'custom', 'template', 'param', 'return', 'throws']
-                ),
-                self::glueBricks(
-                    $docBlockBricks,
-                    ['title', 'description', 'internal', 'return', 'custom', 'template', 'param', 'throws']
-                ),
-            ],
-            [
-                ['order' => ['param', 'throws', 'return']],
-                self::glueBricks(
-                    $docBlockBricks,
-                    ['title', 'description', 'internal', 'custom', 'template', 'param', 'throws', 'return']
-                ),
-                self::glueBricks(
-                    $docBlockBricks,
-                    ['title', 'description', 'internal', 'return', 'custom', 'template', 'param', 'throws']
-                ),
-            ],
-            [
-                ['order' => ['template', 'param', 'throws', 'return']],
-                self::glueBricks(
-                    $docBlockBricks,
-                    ['title', 'description', 'internal', 'template', 'param', 'throws', 'return', 'custom']
-                ),
-                self::glueBricks(
-                    $docBlockBricks,
-                    ['title', 'description', 'internal', 'return', 'param', 'template', 'custom', 'throws']
-                ),
-            ],
-            [
-                ['order' => ['template', 'param', 'throws', 'return']],
-                self::glueBricks(
-                    $docBlockBricks,
-                    ['title', 'description', 'internal', 'template', 'param', 'throws', 'return', 'custom']
-                ),
-                self::glueBricks(
-                    $docBlockBricks,
-                    ['title', 'description', 'internal', 'param', 'return', 'template', 'custom', 'throws']
-                ),
-            ],
-        ];
-    }
-
-    /**
-     * @param array<string, string|string[]> $bricks
-     * @param string[]                       $order
-     */
-    private static function glueBricks(array $bricks, array $order): string
-    {
-        $indent = '    ';
-        $commentIndent = $indent.' *';
-        $out = '';
-        foreach ($order as $tag) {
-            // not an annotation brick
-            if (isset($bricks[$tag])) {
-                $out .= "{$commentIndent} ".str_replace("\n", "\n{$commentIndent} ", $bricks[$tag])."\n";
-            }
-            // it's an annotation
-            elseif (isset($bricks["@{$tag}"])) {
-                $annotation = "@{$tag}";
-                $brick = (array) $bricks[$annotation];
-                foreach ($brick as $line) {
-                    $out .= "{$commentIndent} {$annotation} ".str_replace("\n", "\n{$commentIndent}  ".str_repeat(' ', \strlen($annotation)), $line)."\n";
-                }
-            }
-        }
-
-        return "<?php\n{$indent}/**\n{$out}{$commentIndent}*/\n\n";
     }
 }
