@@ -2,19 +2,27 @@
 Rule ``phpdoc_order``
 =====================
 
-Annotations in PHPDoc should be ordered in defined sequence.
+Annotations in PHPDoc should be ordered in specific style.
+
+Description
+-----------
+
+Annotations in PHPDoc should be ordered in one of the styles below:
+
+- ``'phpcs'`` style annotations order is ``@param``, ``@throws``, ``@return``,
+- ``'symfony'`` style annotations order is ``@param``, ``@return``, ``@throws``.
 
 Configuration
 -------------
 
-``order``
+``style``
 ~~~~~~~~~
 
-Sequence in which annotations in PHPDoc should be ordered.
+Style in which annotations in PHPDoc should be ordered.
 
-Allowed types: ``string[]``
+Allowed values: ``'phpcs'``, ``'symfony'``
 
-Default value: ``['param', 'throws', 'return']``
+Default value: ``'phpcs'``
 
 Examples
 --------
@@ -44,7 +52,7 @@ Example #1
 Example #2
 ~~~~~~~~~~
 
-With configuration: ``['order' => ['param', 'throws', 'return']]``.
+With configuration: ``['style' => 'symfony']``.
 
 .. code-block:: diff
 
@@ -59,14 +67,14 @@ With configuration: ``['order' => ['param', 'throws', 'return']]``.
    - * @return int  Return the number of changes.
      * @param string $foo
      * @param bool   $bar Bar
-   + * @throws Exception|RuntimeException foo
    + * @return int  Return the number of changes.
+   + * @throws Exception|RuntimeException foo
      */
 
 Example #3
 ~~~~~~~~~~
 
-With configuration: ``['order' => ['param', 'return', 'throws']]``.
+With configuration: ``['style' => 'phpcs']``.
 
 .. code-block:: diff
 
@@ -81,47 +89,14 @@ With configuration: ``['order' => ['param', 'return', 'throws']]``.
    - * @return int  Return the number of changes.
      * @param string $foo
      * @param bool   $bar Bar
-   + * @return int  Return the number of changes.
    + * @throws Exception|RuntimeException foo
-     */
-
-Example #4
-~~~~~~~~~~
-
-With configuration: ``['order' => ['param', 'custom', 'throws', 'return']]``.
-
-.. code-block:: diff
-
-   --- Original
-   +++ New
-    <?php
-    /**
-     * Hello there!
-     *
-   + * @param string $foo
-   + * @param bool   $bar Bar
-   + * @custom Test!
-     * @throws Exception|RuntimeException foo
-   - * @custom Test!
-     * @return int  Return the number of changes.
-   - * @param string $foo
-   - * @param bool   $bar Bar
+   + * @return int  Return the number of changes.
      */
 
 Rule sets
 ---------
 
-The rule is part of the following rule sets:
-
-@Laravel
-  Using the `@Laravel <./../../ruleSets/Laravel.rst>`_ rule set will enable the ``phpdoc_order`` rule with the config below:
-
-  ``['order' => ['param', 'return', 'throws']]``
+The rule is part of the following rule set:
 
 @PhpCsFixer
   Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``phpdoc_order`` rule with the default config.
-
-@Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``phpdoc_order`` rule with the config below:
-
-  ``['order' => ['param', 'return', 'throws']]``
