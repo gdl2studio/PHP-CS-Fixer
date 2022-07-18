@@ -30,7 +30,7 @@ final class TagComparator
      *
      * @internal
      */
-    public const DEFAULT_GROUPS = [
+    public const TAG_GROUPS = [
         ['deprecated', 'link', 'see', 'since'],
         ['author', 'copyright', 'license'],
         ['category', 'package', 'subpackage'],
@@ -38,11 +38,45 @@ final class TagComparator
     ];
 
     /**
-     * Should the given tags be kept together, or kept apart?
-     *
-     * @param string[][] $groups
+     * @var string[][]
      */
-    public static function shouldBeTogether(Tag $first, Tag $second, array $groups = self::DEFAULT_GROUPS): bool
+    private array $groups = [];
+
+    private function __construct()
+    {
+    }
+
+    /**
+     * @param null|string[][] $groups
+     *
+     * @return $this
+     */
+    public static function configure(?array $groups = null): self
+    {
+        $comparator = new self();
+        $comparator->groups = (null === $groups) ? self::TAG_GROUPS : $groups;
+
+        return $comparator;
+    }
+
+    /**
+     * @param null|string[][] $additionalGroups
+     *
+     * @return $this
+     */
+    public function withAdditionalGroups(?array $additionalGroups): self
+    {
+        if (\is_array($additionalGroups)) {
+            $this->groups = array_merge($this->groups, $additionalGroups);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Should the given tags be kept together, or kept apart?
+     */
+    public function shouldBeTogether(Tag $first, Tag $second): bool
     {
         @trigger_error('Method '.__METHOD__.' is deprecated and will be removed in version 4.0.', E_USER_DEPRECATED);
 
@@ -53,7 +87,7 @@ final class TagComparator
             return true;
         }
 
-        foreach ($groups as $group) {
+        foreach ($this->groups as $group) {
             if (\in_array($firstName, $group, true) && \in_array($secondName, $group, true)) {
                 return true;
             }

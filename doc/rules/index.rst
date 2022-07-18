@@ -702,7 +702,7 @@ PHPDoc
   Order phpdoc tags by value.
 - `phpdoc_order <./phpdoc/phpdoc_order.rst>`_
 
-  Annotations in PHPDoc should be ordered in defined sequence.
+  Annotations in PHPDoc should be ordered so that ``@param`` annotations come first, then ``@throws`` annotations, then ``@return`` annotations.
 - `phpdoc_return_self_reference <./phpdoc/phpdoc_return_self_reference.rst>`_
 
   The type of ``@return`` annotations of methods returning a reference to itself must the configured one.
@@ -711,7 +711,7 @@ PHPDoc
   Scalar types should always be written in the same form. ``int`` not ``integer``, ``bool`` not ``boolean``, ``float`` not ``real`` or ``double``.
 - `phpdoc_separation <./phpdoc/phpdoc_separation.rst>`_
 
-  Annotations in PHPDoc should be grouped together so that annotations of the same type immediately follow each other. Annotations of a different type are separated by a single blank line.
+  Annotations in PHPDoc should be grouped together so that annotations of the same type immediately follow each other. Annotations of a different type are separated by a single blank line, except those specified in ``additional_groups`` option.
 - `phpdoc_single_line_var_spacing <./phpdoc/phpdoc_single_line_var_spacing.rst>`_
 
   Single line ``@var`` PHPDoc should have proper spacing.
