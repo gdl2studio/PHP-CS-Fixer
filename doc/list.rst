@@ -1966,6 +1966,10 @@ List of Available Rules
      | How comments should be aligned.
      | Allowed values: ``'left'``, ``'vertical'``
      | Default value: ``'vertical'``
+   - | ``spacing``
+     | Spacing between tag, hint, comment, signature, etc. You can set same spacing for all tags using a positive integer or different spacings for different tags using an associative array of positive integers `['tagA' => spacingForA, 'tagB' => spacingForB]`.
+     | Allowed types: ``int``, ``int[]``
+     | Default value: ``1``
 
 
    Part of rule sets `@PhpCsFixer <./ruleSets/PhpCsFixer.rst>`_ `@Symfony <./ruleSets/Symfony.rst>`_
