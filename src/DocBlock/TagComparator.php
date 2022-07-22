@@ -42,10 +42,6 @@ final class TagComparator
      */
     private array $groups = [];
 
-    private function __construct()
-    {
-    }
-
     /**
      * @param null|string[][] $groups
      *
@@ -60,23 +56,30 @@ final class TagComparator
     }
 
     /**
-     * @param null|string[][] $additionalGroups
-     *
-     * @return $this
+     * Should the given tags be kept together, or kept apart?
+     * Check against configured groups.
      */
-    public function withAdditionalGroups(?array $additionalGroups): self
+    public function shouldBeGroupedTogether(Tag $first, Tag $second): bool
     {
-        if (\is_array($additionalGroups)) {
-            $this->groups = array_merge($this->groups, $additionalGroups);
-        }
-
-        return $this;
+        return self::whetherShouldBeTogether($first, $second, $this->groups);
     }
 
     /**
      * Should the given tags be kept together, or kept apart?
+     * Check against DEFAULT_GROUPS.
      */
-    public function shouldBeTogether(Tag $first, Tag $second): bool
+    public static function shouldBeTogether(Tag $first, Tag $second): bool
+    {
+        return self::whetherShouldBeTogether($first, $second, self::DEFAULT_GROUPS);
+    }
+
+    /**
+     * Should the given tags be kept together, or kept apart?
+     * It would be much prettier if all method and function names rhyme.
+     *
+     * @param string[][] $groups
+     */
+    private static function whetherShouldBeTogether(Tag $first, Tag $second, array $groups): bool
     {
         @trigger_error('Method '.__METHOD__.' is deprecated and will be removed in version 4.0.', E_USER_DEPRECATED);
 
@@ -87,7 +90,7 @@ final class TagComparator
             return true;
         }
 
-        foreach ($this->groups as $group) {
+        foreach ($groups as $group) {
             if (\in_array($firstName, $group, true) && \in_array($secondName, $group, true)) {
                 return true;
             }
