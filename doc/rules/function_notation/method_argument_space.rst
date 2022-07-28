@@ -209,10 +209,8 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PER
-  Using the `@PER <./../../ruleSets/PER.rst>`_ rule set will enable the ``method_argument_space`` rule with the config below:
-
-  ``['on_multiline' => 'ensure_fully_multiline']``
+@Laravel
+  Using the `@Laravel <./../../ruleSets/Laravel.rst>`_ rule set will enable the ``method_argument_space`` rule with the default config.
 
 @PHP73Migration
   Using the `@PHP73Migration <./../../ruleSets/PHP73Migration.rst>`_ rule set will enable the ``method_argument_space`` rule with the config below:
@@ -234,18 +232,13 @@ The rule is part of the following rule sets:
 
   ``['after_heredoc' => true]``
 
-@PHP82Migration
-  Using the `@PHP82Migration <./../../ruleSets/PHP82Migration.rst>`_ rule set will enable the ``method_argument_space`` rule with the config below:
-
-  ``['after_heredoc' => true]``
-
-@PSR2
-  Using the `@PSR2 <./../../ruleSets/PSR2.rst>`_ rule set will enable the ``method_argument_space`` rule with the config below:
+@PSR12
+  Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``method_argument_space`` rule with the config below:
 
   ``['on_multiline' => 'ensure_fully_multiline']``
 
-@PSR12
-  Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``method_argument_space`` rule with the config below:
+@PSR2
+  Using the `@PSR2 <./../../ruleSets/PSR2.rst>`_ rule set will enable the ``method_argument_space`` rule with the config below:
 
   ``['on_multiline' => 'ensure_fully_multiline']``
 

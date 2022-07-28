@@ -228,3 +228,13 @@ With configuration: ``['allow_single_line_anonymous_functions' => true]``.
    +$result = true;
    +    return $result;
    +};
+
+Rule sets
+---------
+
+The rule is part of the following rule set:
+
+@Laravel
+  Using the `@Laravel <./../../ruleSets/Laravel.rst>`_ rule set will enable the ``curly_braces_position`` rule with the config below:
+
+  ``['allow_single_line_empty_anonymous_classes' => true, 'allow_single_line_anonymous_functions' => false, 'control_structures_opening_brace' => 'same_line', 'classes_opening_brace' => 'next_line_unless_newline_at_signature_end', 'functions_opening_brace' => 'next_line_unless_newline_at_signature_end', 'anonymous_classes_opening_brace' => 'next_line_unless_newline_at_signature_end', 'anonymous_functions_opening_brace' => 'same_line']``

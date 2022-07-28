@@ -52,8 +52,8 @@ Rule sets
 
 The rule is part of the following rule sets:
 
-@PER
-  Using the `@PER <./../../ruleSets/PER.rst>`_ rule set will enable the ``short_scalar_cast`` rule.
+@Laravel
+  Using the `@Laravel <./../../ruleSets/Laravel.rst>`_ rule set will enable the ``short_scalar_cast`` rule.
 
 @PHP74Migration
   Using the `@PHP74Migration <./../../ruleSets/PHP74Migration.rst>`_ rule set will enable the ``short_scalar_cast`` rule.
@@ -63,9 +63,6 @@ The rule is part of the following rule sets:
 
 @PHP81Migration
   Using the `@PHP81Migration <./../../ruleSets/PHP81Migration.rst>`_ rule set will enable the ``short_scalar_cast`` rule.
-
-@PHP82Migration
-  Using the `@PHP82Migration <./../../ruleSets/PHP82Migration.rst>`_ rule set will enable the ``short_scalar_cast`` rule.
 
 @PSR12
   Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``short_scalar_cast`` rule.
