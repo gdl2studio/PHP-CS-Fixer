@@ -20,7 +20,7 @@ Rules
   ``['statements' => ['return']]``
 - `braces <./../rules/basic/braces.rst>`_
   config:
-  ``['allow_single_line_anonymous_class_with_empty_body' => false, 'allow_single_line_closure' => false, 'position_after_control_structures' => 'same', 'position_after_functions_and_oop_constructs' => 'next', 'position_after_anonymous_constructs' => 'next']``
+  ``['allow_single_line_anonymous_class_with_empty_body' => false, 'allow_single_line_closure' => false, 'position_after_anonymous_constructs' => 'next', 'position_after_control_structures' => 'same', 'position_after_functions_and_oop_constructs' => 'next']``
 - `cast_spaces <./../rules/cast_notation/cast_spaces.rst>`_
 - `class_attributes_separation <./../rules/class_notation/class_attributes_separation.rst>`_
 - `class_definition <./../rules/class_notation/class_definition.rst>`_
@@ -30,7 +30,7 @@ Rules
 - `constant_case <./../rules/casing/constant_case.rst>`_
 - `curly_braces_position <./../rules/basic/curly_braces_position.rst>`_
   config:
-  ``['allow_single_line_empty_anonymous_classes' => true, 'allow_single_line_anonymous_functions' => false, 'control_structures_opening_brace' => 'same_line', 'classes_opening_brace' => 'next_line_unless_newline_at_signature_end', 'functions_opening_brace' => 'next_line_unless_newline_at_signature_end', 'anonymous_classes_opening_brace' => 'next_line_unless_newline_at_signature_end', 'anonymous_functions_opening_brace' => 'same_line']``
+  ``['allow_single_line_anonymous_functions' => false, 'allow_single_line_empty_anonymous_classes' => true, 'anonymous_classes_opening_brace' => 'next_line_unless_newline_at_signature_end', 'anonymous_functions_opening_brace' => 'same_line', 'classes_opening_brace' => 'next_line_unless_newline_at_signature_end', 'control_structures_opening_brace' => 'same_line', 'functions_opening_brace' => 'next_line_unless_newline_at_signature_end']``
 - `declare_equal_normalize <./../rules/language_construct/declare_equal_normalize.rst>`_
 - `elseif <./../rules/control_structure/elseif.rst>`_
 - `encoding <./../rules/basic/encoding.rst>`_
@@ -108,7 +108,7 @@ Rules
 - `phpdoc_no_useless_inheritdoc <./../rules/phpdoc/phpdoc_no_useless_inheritdoc.rst>`_
 - `phpdoc_order <./../rules/phpdoc/phpdoc_order.rst>`_
   config:
-  ``['order' => ['param', 'throws', 'return']]``
+  ``['order' => ['param', 'return', 'throws']]``
 - `phpdoc_return_self_reference <./../rules/phpdoc/phpdoc_return_self_reference.rst>`_
 - `phpdoc_scalar <./../rules/phpdoc/phpdoc_scalar.rst>`_
 - `phpdoc_separation <./../rules/phpdoc/phpdoc_separation.rst>`_

@@ -254,7 +254,10 @@ Integration of %s.
         $keys = array_keys($data);
 
         if ($this->allInteger($keys)) {
-            sort($data);
+            // do not sort if all values are arrays
+            if (!$this->allArray($data)) {
+                sort($data);
+            }
         } else {
             ksort($data);
         }
@@ -276,6 +279,17 @@ Integration of %s.
     {
         foreach ($values as $value) {
             if (!\is_int($value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function allArray(array $values): bool
+    {
+        foreach ($values as $value) {
+            if (!\is_array($value)) {
                 return false;
             }
         }

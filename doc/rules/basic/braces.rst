@@ -182,7 +182,7 @@ The rule is part of the following rule sets:
 @Laravel
   Using the `@Laravel <./../../ruleSets/Laravel.rst>`_ rule set will enable the ``braces`` rule with the config below:
 
-  ``['allow_single_line_anonymous_class_with_empty_body' => false, 'allow_single_line_closure' => false, 'position_after_control_structures' => 'same', 'position_after_functions_and_oop_constructs' => 'next', 'position_after_anonymous_constructs' => 'next']``
+  ``['allow_single_line_anonymous_class_with_empty_body' => false, 'allow_single_line_closure' => false, 'position_after_anonymous_constructs' => 'next', 'position_after_control_structures' => 'same', 'position_after_functions_and_oop_constructs' => 'next']``
 
 @PSR12
   Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``braces`` rule with the config below:

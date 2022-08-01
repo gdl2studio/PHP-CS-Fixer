@@ -147,11 +147,11 @@ final class LaravelSet extends AbstractRuleSetDescription
             'phpdoc_scalar' => true,
             'phpdoc_separation' => [
                 'groups' => [
-                    ['param', 'return'],
+                    ['deprecated', 'link', 'see', 'since'],
                     ['author', 'copyright', 'license'],
                     ['category', 'package', 'subpackage'],
                     ['property', 'property-read', 'property-write'],
-                    ['deprecated', 'link', 'see', 'since'],
+                    ['param', 'return'],
                 ],
             ],
             'phpdoc_single_line_var_spacing' => true,
