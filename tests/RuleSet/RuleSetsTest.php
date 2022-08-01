@@ -286,6 +286,9 @@ Integration of %s.
         return true;
     }
 
+    /**
+     * @param array<int|string,mixed> $values
+     */
     private function allArray(array $values): bool
     {
         foreach ($values as $value) {
