@@ -22,6 +22,9 @@ use PhpCsFixer\RuleSet\AbstractRuleSetDescription;
  */
 final class LaravelRiskySet extends AbstractRuleSetDescription
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function getRules(): array
     {
         return [

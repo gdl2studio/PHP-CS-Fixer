@@ -242,7 +242,12 @@ Integration of %s.
      */
     private function doSort(array &$data, string $path): void
     {
-        if ('ordered_imports.imports_order' === $path) { // order matters
+        static $orderMatters = [
+            'ordered_imports.imports_order',
+            'phpdoc_order.order',
+        ];
+
+        if (\in_array($path, $orderMatters, true)) { // order matters
             return;
         }
 

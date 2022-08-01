@@ -116,7 +116,7 @@ The rule is part of the following rule sets:
 @Laravel
   Using the `@Laravel <./../../ruleSets/Laravel.rst>`_ rule set will enable the ``phpdoc_order`` rule with the config below:
 
-  ``['param', 'throws', 'return']``
+  ``['order' => ['param', 'throws', 'return']]``
 
 @PhpCsFixer
   Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``phpdoc_order`` rule with the default config.

@@ -22,6 +22,9 @@ use PhpCsFixer\RuleSet\AbstractRuleSetDescription;
  */
 final class LaravelSet extends AbstractRuleSetDescription
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function getRules(): array
     {
         return [
@@ -42,9 +45,9 @@ final class LaravelSet extends AbstractRuleSetDescription
             'braces' => [
                 'allow_single_line_anonymous_class_with_empty_body' => false,
                 'allow_single_line_closure' => false,
+                'position_after_anonymous_constructs' => 'next',
                 'position_after_control_structures' => 'same',
                 'position_after_functions_and_oop_constructs' => 'next',
-                'position_after_anonymous_constructs' => 'next',
             ],
             'cast_spaces' => true,
             // method_separation
@@ -58,13 +61,13 @@ final class LaravelSet extends AbstractRuleSetDescription
             // lowercase_constants
             'constant_case' => true,
             'curly_braces_position' => [
-                'allow_single_line_empty_anonymous_classes' => true,
                 'allow_single_line_anonymous_functions' => false,
-                'control_structures_opening_brace' => 'same_line',
-                'classes_opening_brace' => 'next_line_unless_newline_at_signature_end',
-                'functions_opening_brace' => 'next_line_unless_newline_at_signature_end',
+                'allow_single_line_empty_anonymous_classes' => true,
                 'anonymous_classes_opening_brace' => 'next_line_unless_newline_at_signature_end',
                 'anonymous_functions_opening_brace' => 'same_line',
+                'classes_opening_brace' => 'next_line_unless_newline_at_signature_end',
+                'control_structures_opening_brace' => 'same_line',
+                'functions_opening_brace' => 'next_line_unless_newline_at_signature_end',
             ],
             'declare_equal_normalize' => true,
             'elseif' => true,
@@ -85,7 +88,7 @@ final class LaravelSet extends AbstractRuleSetDescription
             'lambda_not_used_import' => true,
             // 'laravel_braces' => true,
             // 'laravel_phpdoc_alignment' => true,
-            'laravel_phpdoc_order' => true,
+            // 'laravel_phpdoc_order' => true,
             // 'laravel_phpdoc_separation' => true,
             // unix_line_endings
             'line_ending' => true,
@@ -146,7 +149,7 @@ final class LaravelSet extends AbstractRuleSetDescription
             'ordered_imports' => [
                 'sort_algorithm' => 'alpha',
             ],
-            'phpdoc_alignment' => [
+            'phpdoc_align' => [
                 'align' => 'left',
                 'spacing' => ['param' => 2],
             ],
@@ -162,19 +165,17 @@ final class LaravelSet extends AbstractRuleSetDescription
             'phpdoc_no_package' => true,
             'phpdoc_no_useless_inheritdoc' => true,
             'phpdoc_order' => [
-                'param',
-                'throws',
-                'return',
+                'order' => ['param', 'return', 'throws'],
             ],
             'phpdoc_return_self_reference' => true,
             'phpdoc_scalar' => true,
             'phpdoc_separation' => [
                 'groups' => [
-                    ['deprecated', 'link', 'see', 'since'],
+                    ['param', 'return'],
                     ['author', 'copyright', 'license'],
                     ['category', 'package', 'subpackage'],
                     ['property', 'property-read', 'property-write'],
-                    ['param', 'return'],
+                    ['deprecated', 'link', 'see', 'since'],
                 ],
             ],
             'phpdoc_single_line_var_spacing' => true,
