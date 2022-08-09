@@ -27,14 +27,17 @@ The rule is part of the following rule sets:
 @Laravel
   Using the `@Laravel <./../../ruleSets/Laravel.rst>`_ rule set will enable the ``encoding`` rule.
 
+@PER
+  Using the `@PER <./../../ruleSets/PER.rst>`_ rule set will enable the ``encoding`` rule.
+
 @PSR1
   Using the `@PSR1 <./../../ruleSets/PSR1.rst>`_ rule set will enable the ``encoding`` rule.
 
-@PSR12
-  Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``encoding`` rule.
-
 @PSR2
   Using the `@PSR2 <./../../ruleSets/PSR2.rst>`_ rule set will enable the ``encoding`` rule.
+
+@PSR12
+  Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``encoding`` rule.
 
 @PhpCsFixer
   Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``encoding`` rule.

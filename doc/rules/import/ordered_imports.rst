@@ -10,8 +10,8 @@ Configuration
 ``sort_algorithm``
 ~~~~~~~~~~~~~~~~~~
 
-whether the statements should be sorted alphabetically or by length, or not
-sorted
+Whether the statements should be sorted alphabetically or by length, or not
+sorted.
 
 Allowed values: ``'alpha'``, ``'length'``, ``'none'``
 
@@ -142,13 +142,22 @@ The rule is part of the following rule sets:
 
   ``['sort_algorithm' => 'alpha']``
 
+@PER
+  Using the `@PER <./../../ruleSets/PER.rst>`_ rule set will enable the ``ordered_imports`` rule with the config below:
+
+  ``['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'none']``
+
 @PSR12
   Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``ordered_imports`` rule with the config below:
 
   ``['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'none']``
 
 @PhpCsFixer
-  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``ordered_imports`` rule with the default config.
+  Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``ordered_imports`` rule with the config below:
+
+  ``['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'alpha']``
 
 @Symfony
-  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``ordered_imports`` rule with the default config.
+  Using the `@Symfony <./../../ruleSets/Symfony.rst>`_ rule set will enable the ``ordered_imports`` rule with the config below:
+
+  ``['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'alpha']``

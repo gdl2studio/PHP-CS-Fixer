@@ -29,7 +29,7 @@ Default value: ``false``
 ``position_after_functions_and_oop_constructs``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-whether the opening brace should be placed on "next" or "same" line after classy
+Whether the opening brace should be placed on "next" or "same" line after classy
 constructs (non-anonymous classes, interfaces, traits, methods and non-lambda
 functions).
 
@@ -40,7 +40,7 @@ Default value: ``'next'``
 ``position_after_control_structures``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-whether the opening brace should be placed on "next" or "same" line after
+Whether the opening brace should be placed on "next" or "same" line after
 control structures.
 
 Allowed values: ``'next'``, ``'same'``
@@ -50,7 +50,7 @@ Default value: ``'same'``
 ``position_after_anonymous_constructs``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-whether the opening brace should be placed on "next" or "same" line after
+Whether the opening brace should be placed on "next" or "same" line after
 anonymous constructs (anonymous classes and lambda functions).
 
 Allowed values: ``'next'``, ``'same'``
@@ -184,13 +184,18 @@ The rule is part of the following rule sets:
 
   ``['allow_single_line_anonymous_class_with_empty_body' => false, 'allow_single_line_closure' => false, 'position_after_anonymous_constructs' => 'next', 'position_after_control_structures' => 'same', 'position_after_functions_and_oop_constructs' => 'next']``
 
-@PSR12
-  Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``braces`` rule with the config below:
+@PER
+  Using the `@PER <./../../ruleSets/PER.rst>`_ rule set will enable the ``braces`` rule with the config below:
 
   ``['allow_single_line_anonymous_class_with_empty_body' => true]``
 
 @PSR2
   Using the `@PSR2 <./../../ruleSets/PSR2.rst>`_ rule set will enable the ``braces`` rule with the default config.
+
+@PSR12
+  Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``braces`` rule with the config below:
+
+  ``['allow_single_line_anonymous_class_with_empty_body' => true]``
 
 @PhpCsFixer
   Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``braces`` rule with the config below:

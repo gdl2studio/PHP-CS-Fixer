@@ -29,6 +29,9 @@ The rule is part of the following rule sets:
 @Laravel
   Using the `@Laravel <./../../ruleSets/Laravel.rst>`_ rule set will enable the ``blank_line_after_opening_tag`` rule.
 
+@PER
+  Using the `@PER <./../../ruleSets/PER.rst>`_ rule set will enable the ``blank_line_after_opening_tag`` rule.
+
 @PSR12
   Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``blank_line_after_opening_tag`` rule.
 

@@ -37,6 +37,9 @@ Rules
 - `general_phpdoc_tag_rename <./../rules/phpdoc/general_phpdoc_tag_rename.rst>`_
   config:
   ``['replacements' => ['inheritDocs' => 'inheritDoc']]``
+- `global_namespace_import <./../rules/import/global_namespace_import.rst>`_
+  config:
+  ``['import_classes' => false, 'import_constants' => false, 'import_functions' => false]``
 - `include <./../rules/control_structure/include.rst>`_
 - `increment_style <./../rules/operator/increment_style.rst>`_
 - `integer_literal_case <./../rules/casing/integer_literal_case.rst>`_
@@ -68,9 +71,7 @@ Rules
 - `no_superfluous_phpdoc_tags <./../rules/phpdoc/no_superfluous_phpdoc_tags.rst>`_
   config:
   ``['allow_mixed' => true, 'allow_unused_params' => true]``
-- `no_trailing_comma_in_list_call <./../rules/control_structure/no_trailing_comma_in_list_call.rst>`_
-- `no_trailing_comma_in_singleline_array <./../rules/array_notation/no_trailing_comma_in_singleline_array.rst>`_
-- `no_trailing_comma_in_singleline_function_call <./../rules/function_notation/no_trailing_comma_in_singleline_function_call.rst>`_
+- `no_trailing_comma_in_singleline <./../rules/basic/no_trailing_comma_in_singleline.rst>`_
 - `no_unneeded_control_parentheses <./../rules/control_structure/no_unneeded_control_parentheses.rst>`_
   config:
   ``['statements' => ['break', 'clone', 'continue', 'echo_print', 'others', 'return', 'switch_case', 'yield', 'yield_from']]``
@@ -80,11 +81,14 @@ Rules
 - `no_unneeded_import_alias <./../rules/import/no_unneeded_import_alias.rst>`_
 - `no_unset_cast <./../rules/cast_notation/no_unset_cast.rst>`_
 - `no_unused_imports <./../rules/import/no_unused_imports.rst>`_
+- `no_useless_concat_operator <./../rules/operator/no_useless_concat_operator.rst>`_
 - `no_useless_nullsafe_operator <./../rules/operator/no_useless_nullsafe_operator.rst>`_
 - `no_whitespace_before_comma_in_array <./../rules/array_notation/no_whitespace_before_comma_in_array.rst>`_
 - `normalize_index_brace <./../rules/array_notation/normalize_index_brace.rst>`_
 - `object_operator_without_whitespace <./../rules/operator/object_operator_without_whitespace.rst>`_
 - `ordered_imports <./../rules/import/ordered_imports.rst>`_
+  config:
+  ``['imports_order' => ['class', 'function', 'const'], 'sort_algorithm' => 'alpha']``
 - `php_unit_fqcn_annotation <./../rules/php_unit/php_unit_fqcn_annotation.rst>`_
 - `php_unit_method_casing <./../rules/php_unit/php_unit_method_casing.rst>`_
 - `phpdoc_align <./../rules/phpdoc/phpdoc_align.rst>`_
@@ -125,9 +129,7 @@ Rules
   ``['comment_types' => ['hash']]``
 - `single_line_throw <./../rules/function_notation/single_line_throw.rst>`_
 - `single_quote <./../rules/string_notation/single_quote.rst>`_
-- `single_space_after_construct <./../rules/language_construct/single_space_after_construct.rst>`_
-  config:
-  ``['constructs' => ['abstract', 'as', 'attribute', 'break', 'case', 'catch', 'class', 'clone', 'comment', 'const', 'const_import', 'continue', 'do', 'echo', 'else', 'elseif', 'enum', 'extends', 'final', 'finally', 'for', 'foreach', 'function', 'function_import', 'global', 'goto', 'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface', 'match', 'named_argument', 'namespace', 'new', 'open_tag_with_echo', 'php_doc', 'php_open', 'print', 'private', 'protected', 'public', 'readonly', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'type_colon', 'use', 'use_lambda', 'use_trait', 'var', 'while', 'yield', 'yield_from']]``
+- `single_space_around_construct <./../rules/language_construct/single_space_around_construct.rst>`_
 - `space_after_semicolon <./../rules/semicolon/space_after_semicolon.rst>`_
   config:
   ``['remove_in_empty_for_expressions' => true]``

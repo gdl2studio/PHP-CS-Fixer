@@ -14,7 +14,7 @@ Configuration
 
 The structural elements to fix (PHP >= 7.1 required for ``const``).
 
-Allowed values: a subset of ``['property', 'method', 'const']``
+Allowed values: a subset of ``['const', 'method', 'property']``
 
 Default value: ``['property', 'method', 'const']``
 
@@ -68,6 +68,9 @@ The rule is part of the following rule sets:
 @Laravel
   Using the `@Laravel <./../../ruleSets/Laravel.rst>`_ rule set will enable the ``visibility_required`` rule with the default config.
 
+@PER
+  Using the `@PER <./../../ruleSets/PER.rst>`_ rule set will enable the ``visibility_required`` rule with the default config.
+
 @PHP71Migration
   Using the `@PHP71Migration <./../../ruleSets/PHP71Migration.rst>`_ rule set will enable the ``visibility_required`` rule with the default config.
 
@@ -83,13 +86,16 @@ The rule is part of the following rule sets:
 @PHP81Migration
   Using the `@PHP81Migration <./../../ruleSets/PHP81Migration.rst>`_ rule set will enable the ``visibility_required`` rule with the default config.
 
-@PSR12
-  Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``visibility_required`` rule with the default config.
+@PHP82Migration
+  Using the `@PHP82Migration <./../../ruleSets/PHP82Migration.rst>`_ rule set will enable the ``visibility_required`` rule with the default config.
 
 @PSR2
   Using the `@PSR2 <./../../ruleSets/PSR2.rst>`_ rule set will enable the ``visibility_required`` rule with the config below:
 
   ``['elements' => ['method', 'property']]``
+
+@PSR12
+  Using the `@PSR12 <./../../ruleSets/PSR12.rst>`_ rule set will enable the ``visibility_required`` rule with the default config.
 
 @PhpCsFixer
   Using the `@PhpCsFixer <./../../ruleSets/PhpCsFixer.rst>`_ rule set will enable the ``visibility_required`` rule with the default config.

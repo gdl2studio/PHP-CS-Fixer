@@ -26,18 +26,6 @@ Allowed values: ``'left'``, ``'vertical'``
 
 Default value: ``'vertical'``
 
-``spacing``
-~~~~~~~~~~~
-
-Spacing between tag, hint, comment, signature, etc. You can set same spacing for
-all tags using a positive integer or different spacings for different tags using
-an associative array of positive integers ``['tagA' => spacingForA, 'tagB' =>
-spacingForB]``.
-
-Allowed types: ``int``, ``int[]``
-
-Default value: ``1``
-
 Examples
 --------
 
@@ -54,27 +42,14 @@ Example #1
     /**
    - * @param  EngineInterface $templating
    - * @param string      $format
-   - * @param  int  $code       An HTTP response status code
-   - *                              See constants
+   - * @param  int  $code       an HTTP response status code
    - * @param    bool         $debug
-   - * @param    bool         $debug See constants
-   - * See constants
-   - * @param  mixed    &$reference     A parameter passed by reference
+   - * @param  mixed    &$reference     a parameter passed by reference
    + * @param EngineInterface $templating
    + * @param string          $format
-   + * @param int             $code       An HTTP response status code
-   + *                                    See constants
+   + * @param int             $code       an HTTP response status code
    + * @param bool            $debug
-   + * @param bool            $debug      See constants
-   + *                                    See constants
-   + * @param mixed           &$reference A parameter passed by reference
-     *
-     * @return Foo description foo
-     *
-   - * @throws Foo             description foo
-   + * @throws Foo description foo
-     *             description foo
-     *
+   + * @param mixed           &$reference a parameter passed by reference
      */
 
 Example #2
@@ -90,27 +65,14 @@ With configuration: ``['align' => 'vertical']``.
     /**
    - * @param  EngineInterface $templating
    - * @param string      $format
-   - * @param  int  $code       An HTTP response status code
-   - *                              See constants
+   - * @param  int  $code       an HTTP response status code
    - * @param    bool         $debug
-   - * @param    bool         $debug See constants
-   - * See constants
-   - * @param  mixed    &$reference     A parameter passed by reference
+   - * @param  mixed    &$reference     a parameter passed by reference
    + * @param EngineInterface $templating
    + * @param string          $format
-   + * @param int             $code       An HTTP response status code
-   + *                                    See constants
+   + * @param int             $code       an HTTP response status code
    + * @param bool            $debug
-   + * @param bool            $debug      See constants
-   + *                                    See constants
-   + * @param mixed           &$reference A parameter passed by reference
-     *
-     * @return Foo description foo
-     *
-   - * @throws Foo             description foo
-   + * @throws Foo description foo
-     *             description foo
-     *
+   + * @param mixed           &$reference a parameter passed by reference
      */
 
 Example #3
@@ -126,101 +88,14 @@ With configuration: ``['align' => 'left']``.
     /**
    - * @param  EngineInterface $templating
    - * @param string      $format
-   - * @param  int  $code       An HTTP response status code
-   - *                              See constants
+   - * @param  int  $code       an HTTP response status code
    - * @param    bool         $debug
-   - * @param    bool         $debug See constants
-   - * See constants
-   - * @param  mixed    &$reference     A parameter passed by reference
+   - * @param  mixed    &$reference     a parameter passed by reference
    + * @param EngineInterface $templating
    + * @param string $format
-   + * @param int $code An HTTP response status code
-   + *                  See constants
+   + * @param int $code an HTTP response status code
    + * @param bool $debug
-   + * @param bool $debug See constants
-   + *                    See constants
-   + * @param mixed &$reference A parameter passed by reference
-     *
-     * @return Foo description foo
-     *
-   - * @throws Foo             description foo
-   + * @throws Foo description foo
-     *             description foo
-     *
-     */
-
-Example #4
-~~~~~~~~~~
-
-With configuration: ``['align' => 'left', 'spacing' => 2]``.
-
-.. code-block:: diff
-
-   --- Original
-   +++ New
-    <?php
-    /**
-   - * @param  EngineInterface $templating
-   - * @param string      $format
-   - * @param  int  $code       An HTTP response status code
-   - *                              See constants
-   - * @param    bool         $debug
-   - * @param    bool         $debug See constants
-   - * See constants
-   - * @param  mixed    &$reference     A parameter passed by reference
-   + * @param  EngineInterface  $templating
-   + * @param  string  $format
-   + * @param  int  $code  An HTTP response status code
-   + *                     See constants
-   + * @param  bool  $debug
-   + * @param  bool  $debug  See constants
-   + *                       See constants
-   + * @param  mixed  &$reference  A parameter passed by reference
-     *
-   - * @return Foo description foo
-   + * @return  Foo  description foo
-     *
-   - * @throws Foo             description foo
-   - *             description foo
-   + * @throws  Foo  description foo
-   + *               description foo
-     *
-     */
-
-Example #5
-~~~~~~~~~~
-
-With configuration: ``['align' => 'left', 'spacing' => ['param' => 2]]``.
-
-.. code-block:: diff
-
-   --- Original
-   +++ New
-    <?php
-    /**
-   - * @param  EngineInterface $templating
-   - * @param string      $format
-   - * @param  int  $code       An HTTP response status code
-   - *                              See constants
-   - * @param    bool         $debug
-   - * @param    bool         $debug See constants
-   - * See constants
-   - * @param  mixed    &$reference     A parameter passed by reference
-   + * @param  EngineInterface  $templating
-   + * @param  string  $format
-   + * @param  int  $code  An HTTP response status code
-   + *                     See constants
-   + * @param  bool  $debug
-   + * @param  bool  $debug  See constants
-   + *                       See constants
-   + * @param  mixed  &$reference  A parameter passed by reference
-     *
-     * @return Foo description foo
-     *
-   - * @throws Foo             description foo
-   + * @throws Foo description foo
-     *             description foo
-     *
+   + * @param mixed &$reference a parameter passed by reference
      */
 
 Rule sets
