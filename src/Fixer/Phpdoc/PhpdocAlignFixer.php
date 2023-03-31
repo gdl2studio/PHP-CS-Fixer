@@ -29,6 +29,7 @@ use PhpCsFixer\FixerDefinition\FixerDefinitionInterface;
 use PhpCsFixer\Preg;
 use PhpCsFixer\Tokenizer\Token;
 use PhpCsFixer\Tokenizer\Tokens;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -36,6 +37,7 @@ use PhpCsFixer\Tokenizer\Tokens;
  * @author Sebastiaan Stok <s.stok@rollerscapes.net>
  * @author Graham Campbell <hello@gjcampbell.co.uk>
  * @author Dariusz Rumiński <dariusz.ruminski@gmail.com>
+ * @author Jakub Kwaśniewski <jakub@zero-85.pl>
  */
 final class PhpdocAlignFixer extends AbstractFixer implements ConfigurableFixerInterface, WhitespacesAwareFixerInterface
 {
@@ -61,6 +63,16 @@ final class PhpdocAlignFixer extends AbstractFixer implements ConfigurableFixerI
         'method',
     ];
 
+    private const DEFAULT_TAGS_TO_ALIGN = [
+        'method',
+        'param',
+        'property',
+        'return',
+        'throws',
+        'type',
+        'var',
+    ];
+
     private const TAGS_WITH_NAME = [
         'param',
         'property',
@@ -71,6 +83,8 @@ final class PhpdocAlignFixer extends AbstractFixer implements ConfigurableFixerI
     private const TAGS_WITH_METHOD_SIGNATURE = [
         'method',
     ];
+
+    private const DEFAULT_SPACING = 1;
 
     /**
      * @var string
@@ -86,6 +100,13 @@ final class PhpdocAlignFixer extends AbstractFixer implements ConfigurableFixerI
      * @var string
      */
     private $align;
+
+    /**
+     * same spacing for all or specific for different tags.
+     *
+     * @var int|int[]
+     */
+    private $spacing = 1;
 
     /**
      * {@inheritdoc}
@@ -121,7 +142,9 @@ final class PhpdocAlignFixer extends AbstractFixer implements ConfigurableFixerI
 
         $this->regex = '/^'.$indent.'\ \*\ @(?J)(?:'.implode('|', $types).')'.$desc.'\s*$/ux';
         $this->regexCommentLine = '/^'.$indent.' \*(?! @)(?:\s+(?P<desc>\V+))(?<!\*\/)\r?$/u';
+
         $this->align = $this->configuration['align'];
+        $this->spacing = $this->configuration['spacing'];
     }
 
     /**
@@ -134,9 +157,18 @@ final class PhpdocAlignFixer extends AbstractFixer implements ConfigurableFixerI
 /**
  * @param  EngineInterface $templating
  * @param string      $format
- * @param  int  $code       an HTTP response status code
+ * @param  int  $code       An HTTP response status code
+ *                              See constants
  * @param    bool         $debug
- * @param  mixed    &$reference     a parameter passed by reference
+ * @param    bool         $debug See constants
+ * See constants
+ * @param  mixed    &$reference     A parameter passed by reference
+ *
+ * @return Foo description foo
+ *
+ * @throws Foo            description foo
+ *             description foo
+ *
  */
 
 EOF;
@@ -147,6 +179,8 @@ EOF;
                 new CodeSample($code),
                 new CodeSample($code, ['align' => self::ALIGN_VERTICAL]),
                 new CodeSample($code, ['align' => self::ALIGN_LEFT]),
+                new CodeSample($code, ['align' => self::ALIGN_LEFT, 'spacing' => 2]),
+                new CodeSample($code, ['align' => self::ALIGN_LEFT, 'spacing' => ['param' => 2]]),
             ]
         );
     }
@@ -201,29 +235,50 @@ EOF;
      */
     protected function createConfigurationDefinition(): FixerConfigurationResolverInterface
     {
-        $tags = new FixerOptionBuilder('tags', 'The tags that should be aligned.');
-        $tags
-            ->setAllowedTypes(['array'])
-            ->setAllowedValues([new AllowedValueSubset(self::ALIGNABLE_TAGS)])
-            ->setDefault([
-                'method',
-                'param',
-                'property',
-                'return',
-                'throws',
-                'type',
-                'var',
-            ])
-        ;
+        $allowPositiveInteger = function ($value) {
+            if (\is_int($value) && $value <= 0) {
+                throw new InvalidOptionsException('The "spacing" option is invalid. It must be greater than zero.');
+            }
 
-        $align = new FixerOptionBuilder('align', 'How comments should be aligned.');
-        $align
-            ->setAllowedTypes(['string'])
-            ->setAllowedValues([self::ALIGN_LEFT, self::ALIGN_VERTICAL])
-            ->setDefault(self::ALIGN_VERTICAL)
-        ;
+            return \is_int($value);
+        };
 
-        return new FixerConfigurationResolver([$tags->getOption(), $align->getOption()]);
+        $allowArrayOfPositiveIntegers = function ($value) {
+            if (\is_array($value)) {
+                foreach ($value as $val) {
+                    if (\is_int($val) && $val <= 0) {
+                        throw new InvalidOptionsException('The option "spacing" is invalid. All spacings must be greater than zero.');
+                    }
+                }
+            }
+
+            return \is_array($value);
+        };
+
+        return new FixerConfigurationResolver([
+            (new FixerOptionBuilder('tags', 'The tags that should be aligned.'))
+                ->setAllowedTypes(['array'])
+                ->setAllowedValues([new AllowedValueSubset(self::ALIGNABLE_TAGS)])
+                ->setDefault(self::DEFAULT_TAGS_TO_ALIGN)
+                ->getOption(),
+
+            (new FixerOptionBuilder('align', 'How comments should be aligned.'))
+                ->setAllowedTypes(['string'])
+                ->setAllowedValues([self::ALIGN_LEFT, self::ALIGN_VERTICAL])
+                ->setDefault(self::ALIGN_VERTICAL)
+                ->getOption(),
+
+            (new FixerOptionBuilder(
+                'spacing',
+                'Spacing between tag, hint, comment, signature, etc. You can set same spacing for all tags using a positive integer '.
+                'or different spacings for different tags using an associative array of positive integers '.
+                '`[\'tagA\' => spacingForA, \'tagB\' => spacingForB]`.'
+            ))
+                ->setAllowedTypes(['int', 'int[]'])
+                ->setAllowedValues([$allowPositiveInteger, $allowArrayOfPositiveIntegers])
+                ->setDefault(self::DEFAULT_SPACING)
+                ->getOption(),
+        ]);
     }
 
     private function fixDocBlock(DocBlock $docBlock): void
@@ -272,6 +327,8 @@ EOF;
 
             $currTag = null;
 
+            $spacingForTag = $this->spacingForTag($currTag);
+
             // update
             foreach ($items as $j => $item) {
                 if (null === $item['tag']) {
@@ -281,10 +338,10 @@ EOF;
                         continue;
                     }
 
-                    $extraIndent = 2;
+                    $extraIndent = 2 * $spacingForTag;
 
                     if (\in_array($currTag, self::TAGS_WITH_NAME, true) || \in_array($currTag, self::TAGS_WITH_METHOD_SIGNATURE, true)) {
-                        $extraIndent = 3;
+                        $extraIndent = 3 * $spacingForTag;
                     }
 
                     if ($hasStatic) {
@@ -308,6 +365,8 @@ EOF;
 
                 $currTag = $item['tag'];
 
+                $spacingForTag = $this->spacingForTag($currTag);
+
                 $line =
                     $item['indent']
                     .' * @'
@@ -316,33 +375,33 @@ EOF;
                 if ($hasStatic) {
                     $line .=
                         $this->getIndent(
-                            $tagMax - \strlen($item['tag']) + 1,
-                            $item['static'] ? 1 : 0
+                            $tagMax - \strlen($item['tag']) + $spacingForTag,
+                            $item['static'] ? $spacingForTag : 0
                         )
                         .($item['static'] ?: $this->getIndent(6 /* \strlen('static') */, 0));
-                    $hintVerticalAlignIndent = 1;
+                    $hintVerticalAlignIndent = $spacingForTag;
                 } else {
-                    $hintVerticalAlignIndent = $tagMax - \strlen($item['tag']) + 1;
+                    $hintVerticalAlignIndent = $tagMax - \strlen($item['tag']) + $spacingForTag;
                 }
 
                 $line .=
                     $this->getIndent(
                         $hintVerticalAlignIndent,
-                        $item['hint'] ? 1 : 0
+                        $item['hint'] ? $spacingForTag : 0
                     )
                     .$item['hint'];
 
                 if (!empty($item['var'])) {
                     $line .=
-                        $this->getIndent(($hintMax ?: -1) - \strlen($item['hint']) + 1)
+                        $this->getIndent(($hintMax ?: -1) - \strlen($item['hint']) + $spacingForTag, $spacingForTag)
                         .$item['var']
                         .(
                             !empty($item['desc'])
-                            ? $this->getIndent($varMax - \strlen($item['var']) + 1).$item['desc'].$lineEnding
-                            : $lineEnding
+                                ? $this->getIndent($varMax - \strlen($item['var']) + $spacingForTag, $spacingForTag).$item['desc'].$lineEnding
+                                : $lineEnding
                         );
                 } elseif (!empty($item['desc'])) {
-                    $line .= $this->getIndent($hintMax - \strlen($item['hint']) + 1).$item['desc'].$lineEnding;
+                    $line .= $this->getIndent($hintMax - \strlen($item['hint']) + $spacingForTag, $spacingForTag).$item['desc'].$lineEnding;
                 } else {
                     $line .= $lineEnding;
                 }
@@ -350,6 +409,13 @@ EOF;
                 $docBlock->getLine($current + $j)->setContent($line);
             }
         }
+    }
+
+    private function spacingForTag(?string $tag): int
+    {
+        return (\is_int($this->spacing)) ?
+            $this->spacing :
+            ($this->spacing[$tag] ?? self::DEFAULT_SPACING);
     }
 
     /**
@@ -430,18 +496,20 @@ EOF;
             return 0;
         }
 
+        $spacingForTag = $this->spacingForTag($item['tag']);
+
         // Indent according to existing values:
         return
-            $this->getSentenceIndent($item['static']) +
-            $this->getSentenceIndent($item['tag']) +
-            $this->getSentenceIndent($item['hint']) +
-            $this->getSentenceIndent($item['var']);
+            $this->getSentenceIndent($item['static'], $spacingForTag) +
+            $this->getSentenceIndent($item['tag'], $spacingForTag) +
+            $this->getSentenceIndent($item['hint'], $spacingForTag) +
+            $this->getSentenceIndent($item['var'], $spacingForTag);
     }
 
     /**
      * Get indent for sentence.
      */
-    private function getSentenceIndent(?string $sentence): int
+    private function getSentenceIndent(?string $sentence, int $spacingForTag = 1): int
     {
         if (null === $sentence) {
             return 0;
@@ -449,6 +517,6 @@ EOF;
 
         $length = \strlen($sentence);
 
-        return 0 === $length ? 0 : $length + 1;
+        return 0 === $length ? 0 : $length + $spacingForTag;
     }
 }

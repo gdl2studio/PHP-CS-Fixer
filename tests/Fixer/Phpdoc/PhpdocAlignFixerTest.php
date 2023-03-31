@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace PhpCsFixer\Tests\Fixer\Phpdoc;
 
+use PhpCsFixer\ConfigurationException\InvalidFixerConfigurationException;
 use PhpCsFixer\Fixer\Phpdoc\PhpdocAlignFixer;
 use PhpCsFixer\Tests\Test\AbstractFixerTestCase;
 use PhpCsFixer\WhitespacesFixerConfig;
@@ -1538,5 +1539,202 @@ class Foo {}
          * @var            \Closure(int, bool): bool       $fn6
          */
         EOT];
+    }
+
+    /**
+     * @dataProvider provideInvalidSpacingConfigurationCases
+     *
+     * @param array<string,mixed> $config
+     */
+    public function testInvalidSpacingConfiguration(array $config, string $expectedMessage): void
+    {
+        $this->expectException(InvalidFixerConfigurationException::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        $this->fixer->configure($config);
+    }
+
+    /**
+     * @return array<string,array>
+     */
+    public static function provideInvalidSpacingConfigurationCases(): array
+    {
+        return [
+            'zero' => [
+                ['spacing' => 0],
+                'The "spacing" option is invalid. It must be greater than zero.',
+            ],
+            'negative' => [
+                ['spacing' => -2],
+                'The "spacing" option is invalid. It must be greater than zero.',
+            ],
+            'zeroInArray' => [
+                ['spacing' => ['param' => 1, 'return' => 0]],
+                'The option "spacing" is invalid. All spacings must be greater than zero.',
+            ],
+            'negativeInArray' => [
+                [
+                    'align' => PhpdocAlignFixer::ALIGN_LEFT,
+                    'spacing' => ['return' => 2, 'param' => -1],
+                ],
+                'The option "spacing" is invalid. All spacings must be greater than zero.',
+            ],
+        ];
+    }
+
+    public function testFixLeftParamTwoSpacedAlign(): void
+    {
+        $this->fixer->configure([
+            'align' => PhpdocAlignFixer::ALIGN_LEFT,
+            'spacing' => ['param' => 2],
+        ]);
+
+        $expected = <<<'EOF'
+<?php
+    /**
+     * @param  EngineInterface  $templating
+     * @param  string  $format
+     * @param  int  $code  An HTTP response status code
+     *                     See constants
+     * @param  bool  $debug
+     * @param  bool  $debug  See constants
+     *                       See constants
+     * @param  mixed  &$reference  A parameter passed by reference
+     *
+     * @return Foo description foo
+     *
+     * @throws Foo description foo
+     *             description foo
+     *
+     */
+
+EOF;
+
+        $input = <<<'EOF'
+<?php
+    /**
+     * @param  EngineInterface $templating
+     * @param string      $format
+     * @param  int  $code       An HTTP response status code
+     *                              See constants
+     * @param    bool         $debug
+     * @param    bool         $debug See constants
+     * See constants
+     * @param  mixed    &$reference     A parameter passed by reference
+     *
+     * @return Foo description foo
+     *
+     * @throws Foo             description foo
+     *             description foo
+     *
+     */
+
+EOF;
+
+        $this->doTest($expected, $input);
+    }
+
+    public function testFixVerticalVariousSpacingAlign(): void
+    {
+        $this->fixer->configure([
+            'align' => PhpdocAlignFixer::ALIGN_VERTICAL,
+            'spacing' => ['param' => 2, 'return' => 4],
+        ]);
+
+        $expected = <<<'EOF'
+<?php
+    /**
+     * @param  EngineInterface  $templating
+     * @param  string           $format
+     * @param  int              $code        An HTTP response status code
+     *                                       See constants
+     * @param  bool             $debug
+     * @param  bool             $debug       See constants
+     *                                       See constants
+     * @param  mixed            &$reference  A parameter passed by reference
+     *
+     * @return    Foo    description foo
+     *
+     * @throws Foo description foo
+     *             description foo
+     *
+     */
+
+EOF;
+
+        $input = <<<'EOF'
+<?php
+    /**
+     * @param  EngineInterface $templating
+     * @param string      $format
+     * @param  int  $code       An HTTP response status code
+     *                              See constants
+     * @param    bool         $debug
+     * @param    bool         $debug See constants
+     * See constants
+     * @param  mixed    &$reference     A parameter passed by reference
+     *
+     * @return Foo description foo
+     *
+     * @throws Foo             description foo
+     *             description foo
+     *
+     */
+
+EOF;
+
+        $this->doTest($expected, $input);
+    }
+
+    public function testFixLeftVariousSpacingAlign(): void
+    {
+        $this->fixer->configure([
+            'align' => PhpdocAlignFixer::ALIGN_LEFT,
+            'spacing' => ['param' => 2, 'return' => 4],
+        ]);
+
+        $expected = <<<'EOF'
+<?php
+    /**
+     * @param  EngineInterface  $templating
+     * @param  string  $format
+     * @param  int  $code  An HTTP response status code
+     *                     See constants
+     * @param  bool  $debug
+     * @param  bool  $debug  See constants
+     *                       See constants
+     * @param  mixed  &$reference  A parameter passed by reference
+     *
+     * @return    Foo    description foo
+     *
+     * @throws Foo description foo
+     *             description foo
+     *
+     */
+
+EOF;
+
+        $input = <<<'EOF'
+<?php
+    /**
+     * @param  EngineInterface $templating
+     * @param string      $format
+     * @param  int  $code       An HTTP response status code
+     *                              See constants
+     * @param    bool         $debug
+     * @param    bool         $debug See constants
+     * See constants
+     * @param  mixed    &$reference     A parameter passed by reference
+     *
+     * @return Foo description foo
+     *
+     * @throws Foo             description foo
+     *             description foo
+     *
+     */
+
+EOF;
+
+        $this->doTest($expected, $input);
     }
 }
